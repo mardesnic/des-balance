@@ -18,7 +18,7 @@ On your phone, open it and choose **Add to Home Screen** (Safari) or **Install a
   - **Medium**: a vegetable with its weight on it, and five fruit to pick the right ones from
   - **Hard**: heavier vegetables, and often some fruit must go next to the vegetable to make it work
 - Each fruit always weighs the same: strawberry 1, apple 2, pear 3, pineapple 5, watermelon 10. Heavier fruit and vegetables are drawn bigger, in about the right sizes
-- Tap a fruit to put it on the right side, or drag it to either side, from one side to the other, or off the scale; tap it on the scale to take it off
+- Drag a fruit onto either side, from one side to the other, or off the scale back to the shelf
 - The scale tips as soon as one side is heavier, even by one strawberry
 - Every round can be solved with the fruit on the shelf, and no single fruit is the whole answer
 - A count of rounds solved at each level

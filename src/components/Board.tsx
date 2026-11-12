@@ -56,30 +56,56 @@ function Badge({ level, weight }: { level: Level; weight: number }) {
 
 type OnPan = { thing: Thing; id?: number };
 
-// Where each thing lies on a pan: the heaviest at the bottom, and rows that
-// sit a little into the row below, like a heap.
+// Where each thing lies on a pan. The heaviest go in first, and each one
+// drops into the lowest spot it fits: on the dish, or resting on what is
+// already there, so nothing floats. Things sink a little into each other,
+// as fruit does in a bowl.
 function heap(things: OnPan[]) {
   const sorted = [...things].sort((a, b) => b.thing.weight - a.thing.weight);
-  const rows: OnPan[][] = [];
-  for (const t of sorted) {
-    const row = rows[rows.length - 1];
-    const width = row?.reduce((w, o) => w + drawn(o.thing.weight), 0) ?? 0;
-    if (row && width + drawn(t.thing.weight) <= SPAN) row.push(t);
-    else rows.push([t]);
-  }
   const placed: (OnPan & { x: number; y: number; size: number })[] = [];
-  let bottom = 3;
-  for (const row of rows) {
-    const width = row.reduce((w, o) => w + drawn(o.thing.weight), 0);
-    let x = -width / 2;
-    let tallest = 0;
-    for (const o of row) {
-      const size = drawn(o.thing.weight);
-      placed.push({ ...o, x: x + size / 2, y: bottom - size / 2, size });
-      x += size;
-      tallest = Math.max(tallest, size);
+  const tops: { left: number; right: number; top: number }[] = [];
+  const DISH_TOP = 3;
+  const rest = (o: OnPan, x: number, bottom: number) => {
+    const size = drawn(o.thing.weight);
+    placed.push({ ...o, x, y: bottom - size / 2, size });
+    tops.push({
+      left: x - size / 2,
+      right: x + size / 2,
+      top: bottom - size * 0.78,
+    });
+  };
+  // As many as fit go side by side on the dish, in the middle.
+  let width = 0;
+  let n = 0;
+  while (n < sorted.length && width + drawn(sorted[n].thing.weight) <= SPAN)
+    width += drawn(sorted[n++].thing.weight);
+  let left = -width / 2;
+  for (const o of sorted.slice(0, n)) {
+    const size = drawn(o.thing.weight);
+    rest(o, left + size / 2, DISH_TOP);
+    left += size;
+  }
+  for (const o of sorted.slice(n)) {
+    const size = drawn(o.thing.weight);
+    const half = size / 2;
+    const reach = Math.max(0, SPAN / 2 - half);
+    // Where it would rest at x: on the highest thing under its middle part.
+    const restAt = (x: number) =>
+      tops
+        .filter((t) => t.right > x - half * 0.6 && t.left < x + half * 0.6)
+        .reduce((y, t) => Math.min(y, t.top), DISH_TOP);
+    let best = { x: 0, bottom: -Infinity };
+    for (let x = -reach; x <= reach + 0.01; x += 2) {
+      const bottom = restAt(x);
+      // Lowest first; then nearest the middle.
+      if (
+        bottom > best.bottom + 0.5 ||
+        (Math.abs(bottom - best.bottom) <= 0.5 &&
+          Math.abs(x) < Math.abs(best.x))
+      )
+        best = { x, bottom };
     }
-    bottom -= tallest * 0.8;
+    rest(o, best.x, best.bottom);
   }
   return placed;
 }
@@ -107,13 +133,14 @@ export function Board({
   const solved = isBalanced(round);
   const lift = ARM * Math.sin((angle * Math.PI) / 180);
 
-  // Fruit can be tapped onto the right pan and tapped off again, or dragged
-  // from the shelf to a pan, from one pan to the other, or off the scale.
+  // Fruit is dragged: from the shelf to a pan, from one pan to the other, or
+  // off the scale back to the shelf.
   const drag = useRef<Drag>(undefined);
   const [ghost, setGhost] = useState<{ id: number; x: number; y: number }>();
 
   const down = (e: PointerEvent<Element>, id: number, from: Drag['from']) => {
     if (solved || e.button > 0) return;
+    if (from === 'shelf' && isPlaced(round, id)) return;
     drag.current = { id, from, x: e.clientX, y: e.clientY, moved: false };
     try {
       e.currentTarget.setPointerCapture(e.pointerId);
@@ -133,12 +160,8 @@ export function Board({
     drag.current = undefined;
     setGhost(undefined);
     if (!d) return;
-    if (!d.moved) {
-      // A tap.
-      if (d.from === 'shelf' && !isPlaced(round, d.id)) onPlace(d.id, 'right');
-      else onTakeOff(d.id);
-      return;
-    }
+    // Only a drag moves fruit; a tap does nothing.
+    if (!d.moved) return;
     const side = document
       .elementsFromPoint(e.clientX, e.clientY)
       .map((el) => el.closest('[data-side]')?.getAttribute('data-side'))
