@@ -47,9 +47,10 @@
   box-sizing: border-box;
 }
 
-html,
-body {
-  /* No pull-to-refresh when a drag goes down the screen. */
+/* While playing, dragging fruit down the screen must not reload the page.
+   In the menus, pulling down still reloads it as usual. */
+html:has(.app--play),
+body:has(.app--play) {
   overscroll-behavior: none;
 }
 
