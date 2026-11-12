@@ -73,3 +73,17 @@ export function useCheer(on: boolean) {
 
   return on ? cheer : quiet;
 }
+
+// A short knock when fruit lands on the scale: lower for heavier fruit.
+function plop(weight: number) {
+  wake();
+  try {
+    if (ctx) tone(ctx, 660 / Math.sqrt(weight), 0, 0.18);
+    navigator.vibrate?.(15);
+  } catch {
+    // Nice to have only.
+  }
+}
+
+// Returns the function to call when something is put on the scale.
+export const usePlop = (on: boolean) => (on ? plop : quiet);

@@ -1,8 +1,8 @@
 # Balance
 
-A free balance scale game for young kids that works offline. One side of the scale holds some weights, and the child puts weights on the other side until both sides are level. It starts with counting cubes and grows into simple sums, without writing a single number down.
+A free balance scale game for young kids that works offline. One side of the scale holds something, and the child puts fruit from the shelf on the other side until both sides are level. It starts with counting strawberries and grows into simple sums, without writing a single number down.
 
-Made for ages 5 and up. There is no timer and no way to lose. Undo takes back the last move, and Start over takes all the weights off.
+Made for ages 5 and up. There is no timer and no way to lose. Undo takes back the last move, and Start over takes all the fruit off.
 
 ## Demo
 
@@ -12,7 +12,16 @@ On your phone, open it and choose **Add to Home Screen** (Safari) or **Install a
 
 ## Features
 
-- Four levels, from Very easy to Hard
+- Four levels:
+  - **Very easy**: only strawberries, so put as many as there are on the left
+  - **Easy**: strawberries and apples, and an apple weighs as much as two strawberries (shown with dots)
+  - **Medium**: a vegetable with its weight on it, and five fruit to pick the right ones from
+  - **Hard**: heavier vegetables, and often some fruit must go next to the vegetable to make it work
+- Each fruit always weighs the same: strawberry 1, apple 2, pear 3, pineapple 5, watermelon 10
+- Tap a fruit to put it on the right side, or drag it to either side; tap it again to take it off
+- The scale tips as soon as one side is heavier, even by one strawberry
+- Every round can be solved with the fruit on the shelf, and no single fruit is the whole answer
+- A count of rounds solved at each level
 - Picks up where you left off after a reload
 - Keeps the screen on while you play
 - In English and Croatian, following the phone's language unless you pick one

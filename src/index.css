@@ -204,29 +204,33 @@ h2 {
   min-height: 0;
 }
 
-/* Board */
+/* Board: the scale, and the shelf of fruit under it */
 
 .board {
   width: 100%;
   height: 100%;
   display: grid;
-  place-items: center;
+  grid-template-rows: minmax(0, 1fr) auto;
+  justify-items: center;
+  gap: 12px;
   user-select: none;
   -webkit-user-select: none;
 }
 
 .scale {
   width: 100%;
-  max-height: 100%;
+  height: 100%;
+  min-height: 0;
   fill: none;
   stroke-linecap: round;
   stroke-linejoin: round;
+  overflow: visible;
 }
 
 .scale__stand,
 .scale__beam {
   stroke: var(--scale);
-  stroke-width: 6;
+  stroke-width: 7;
 }
 
 .scale__pivot {
@@ -242,6 +246,112 @@ h2 {
   fill: var(--pan);
   stroke: var(--scale);
   stroke-width: 2;
+}
+
+/* Over everything, for dropping fruit and taking it off. */
+.scale__half {
+  fill: transparent;
+  cursor: pointer;
+}
+
+/* The beam and pans swing a little past level and back, like a real scale. */
+.beam,
+.pan {
+  transition: transform 0.8s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+.board--solved .scale__pivot {
+  fill: var(--good);
+}
+
+.thing__look {
+  text-anchor: middle;
+  dominant-baseline: central;
+  fill: var(--text);
+}
+
+.badge rect,
+.badge circle {
+  fill: var(--surface);
+  stroke: var(--scale);
+  stroke-width: 0.8;
+}
+
+.badge .badge__dot {
+  fill: var(--text);
+  stroke: none;
+}
+
+.badge__text {
+  text-anchor: middle;
+  dominant-baseline: central;
+  font-weight: 800;
+  fill: var(--text);
+}
+
+.shelf {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.fruit {
+  position: relative;
+  width: 58px;
+  height: 58px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+  touch-action: none;
+  transition:
+    transform 0.1s,
+    opacity 0.2s;
+}
+
+.fruit:active {
+  transform: scale(0.94);
+}
+
+.fruit__look {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.fruit__weight {
+  position: absolute;
+  right: 3px;
+  bottom: 2px;
+  min-width: 18px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--bg);
+  font-size: 0.75rem;
+  font-weight: 800;
+  line-height: 18px;
+  letter-spacing: -0.05em;
+}
+
+/* On the scale: a faint outline stays, and a tap brings it back. */
+.fruit--placed {
+  opacity: 0.25;
+  border-style: dashed;
+}
+
+.fruit:disabled {
+  cursor: default;
+}
+
+.ghost {
+  position: fixed;
+  z-index: 5;
+  font-size: 2.6rem;
+  line-height: 1;
+  transform: translate(-50%, -60%);
+  pointer-events: none;
 }
 
 /* Under the board */
@@ -316,6 +426,10 @@ h2 {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .beam,
+  .pan {
+    transition: none;
+  }
   .solved {
     animation: none !important;
   }
