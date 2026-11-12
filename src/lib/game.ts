@@ -18,8 +18,19 @@ export const FRUIT: Record<number, string> = {
   10: '🍉',
 };
 
-// One big vegetable on the left, from Medium up. Its weight is written on it.
-const VEGETABLES = ['🎃', '🥦', '🥕', '🥔', '🍆', '🥬', '🌽'];
+// One vegetable on the left, from Medium up, with its weight written on it.
+// A heavier one is a bigger vegetable, so it looks about right next to the
+// fruit: a potato is light, a pumpkin heavy.
+const VEGETABLES: [number, string[]][] = [
+  [6, ['🥕', '🥔', '🌽']],
+  [11, ['🍆', '🥦', '🥒']],
+  [Infinity, ['🎃', '🥬']],
+];
+
+// How big something is drawn: its size grows with its weight like a real
+// fruit's does (by volume), so a watermelon is about twice a strawberry
+// across, not ten times.
+export const sizeOf = (weight: number) => Math.cbrt(weight);
 
 const fruit = (weight: number): Thing => ({ weight, look: FRUIT[weight] });
 
@@ -78,6 +89,17 @@ export function place(round: Round, id: number, side: Side): Round {
     return round;
   if (side === 'left' && !canUseLeft(round.level)) side = 'right';
   return change(round, [...round.placed, { id, side }]);
+}
+
+// Moves fruit already on the scale to the other pan.
+export function move(round: Round, id: number, side: Side): Round {
+  const at = round.placed.find((p) => p.id === id);
+  if (!at || at.side === side || isBalanced(round)) return round;
+  if (side === 'left' && !canUseLeft(round.level)) return round;
+  return change(
+    round,
+    round.placed.map((p) => (p.id === id ? { id, side } : p))
+  );
 }
 
 export function takeOff(round: Round, id: number): Round {
@@ -149,7 +171,8 @@ const pick = <T>(list: readonly T[], random: () => number) =>
   list[Math.floor(random() * list.length)];
 
 function vegetable(weight: number, random: () => number): Thing {
-  return { weight, look: pick(VEGETABLES, random) };
+  const looks = VEGETABLES.find(([upTo]) => weight <= upTo)![1];
+  return { weight, look: pick(looks, random) };
 }
 
 function make(level: Level, random: () => number): Omit<Round, 'level'> {

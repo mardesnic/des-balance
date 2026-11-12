@@ -11,7 +11,7 @@ import {
   initialStats,
   initialStore,
   isBalanced,
-  lastOn,
+  move,
   newRound,
   place,
   recordWin,
@@ -95,12 +95,6 @@ export default function App() {
     update(next);
   };
 
-  const onTapPan = (side: Side) => {
-    if (!round) return;
-    const id = lastOn(round, side);
-    if (id !== undefined) update(takeOff(round, id));
-  };
-
   const solved = round && isBalanced(round);
 
   return (
@@ -159,7 +153,7 @@ export default function App() {
               round={round}
               onPlace={onPlace}
               onTakeOff={(id) => update(takeOff(round, id))}
-              onTapPan={onTapPan}
+              onMove={(id, side) => update(move(round, id, side))}
             />
           </div>
 

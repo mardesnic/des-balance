@@ -9,9 +9,11 @@ import {
   isBalanced,
   isSolvable,
   lastOn,
+  move,
   newRound,
   place,
   recordWin,
+  sizeOf,
   solutions,
   startOver,
   takeOff,
@@ -160,6 +162,31 @@ describe('playing', () => {
     r = place(round([1], [2]), 0, 'right');
     expect(tilt(r)).toBeGreaterThan(5);
     expect(tilt(round([30], [1]))).toBeGreaterThanOrEqual(-16);
+  });
+
+  it('moves fruit to the other pan, to the left only on Hard', () => {
+    let r = place(round([7], [2, 5, 10], 'hard'), 0, 'right');
+    expect(move(r, 0, 'right')).toBe(r);
+    expect(move(r, 1, 'left')).toBe(r);
+    r = move(r, 0, 'left');
+    expect(r.placed).toEqual([{ id: 0, side: 'left' }]);
+    expect(undo(r).placed).toEqual([{ id: 0, side: 'right' }]);
+    const easy = place(round([3], [1, 2], 'easy'), 0, 'right');
+    expect(move(easy, 0, 'left')).toBe(easy);
+  });
+
+  it('draws heavier things bigger, but not by as much', () => {
+    expect(sizeOf(10)).toBeGreaterThan(sizeOf(5));
+    expect(sizeOf(10) / sizeOf(1)).toBeLessThan(2.5);
+  });
+
+  it('picks a bigger vegetable for a heavier weight', () => {
+    const random = seeded(12);
+    for (let i = 0; i < 100; i++) {
+      const r = newRound('hard', random);
+      if (givenWeight(r) <= 6) expect('🥕🥔🌽').toContain(r.given[0].look);
+      if (givenWeight(r) >= 12) expect('🎃🥬').toContain(r.given[0].look);
+    }
   });
 
   it('counts a win', () => {
