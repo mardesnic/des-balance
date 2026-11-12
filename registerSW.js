@@ -1,0 +1,1 @@
+if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/des-balance/sw.js', { scope: '/des-balance/' })})}
