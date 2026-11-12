@@ -19,8 +19,7 @@ const en = {
   title: 'Balance',
   newGame: 'New game',
   settings: 'Settings',
-  cancel: 'Cancel',
-  done: 'Done',
+  close: 'Close',
   levels: {
     veryEasy: 'Very easy',
     easy: 'Easy',
@@ -52,8 +51,7 @@ const hr: Strings = {
   title: 'Vaga',
   newGame: 'Nova igra',
   settings: 'Postavke',
-  cancel: 'Odustani',
-  done: 'Gotovo',
+  close: 'Zatvori',
   levels: {
     veryEasy: 'Vrlo lagano',
     easy: 'Lagano',
