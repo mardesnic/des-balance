@@ -57,9 +57,7 @@ export default function App() {
     else pushMenu();
     setViewState(next);
   };
-  useBackButton(() => {
-    if (store.round) setViewState('play');
-  });
+  useBackButton(() => setViewState(store.round ? 'play' : 'new'));
   useWakeLock();
   const [sound, setSound] = useSound();
   const cheer = useCheer(sound);
@@ -121,16 +119,22 @@ export default function App() {
                 <Icon name='settings' />
               </button>
             </>
+          ) : round || view === 'settings' ? (
+            <button
+              className='button button--small button--icon'
+              onClick={() => (round ? setView('play') : popMenu())}
+              aria-label={t.close}
+            >
+              <Icon name='close' />
+            </button>
           ) : (
-            round && (
-              <button
-                className='button button--small button--icon'
-                onClick={() => setView('play')}
-                aria-label={t.close}
-              >
-                <Icon name='close' />
-              </button>
-            )
+            <button
+              className='button button--small button--icon'
+              onClick={() => setView('settings')}
+              aria-label={t.settings}
+            >
+              <Icon name='settings' />
+            </button>
           )}
         </div>
       </header>
