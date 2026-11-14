@@ -158,7 +158,7 @@ export default function App() {
             />
           </div>
 
-          {solved ? (
+          {solved && (
             <section className='card solved'>
               <h2>{t.solved}</h2>
               <div className='solved__actions'>
@@ -173,7 +173,11 @@ export default function App() {
                 </button>
               </div>
             </section>
-          ) : (
+          )}
+          <div
+            className={solved ? 'under under--hidden' : 'under'}
+            inert={!!solved}
+          >
             <div className='bar'>
               <p className='goal'>
                 {canUseLeft(round.level) ? t.goalHard : t.goal}
@@ -197,7 +201,7 @@ export default function App() {
                 </button>
               </div>
             </div>
-          )}
+          </div>
         </>
       )}
 

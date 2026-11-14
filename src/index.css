@@ -466,7 +466,24 @@ h2 {
 .solved {
   text-align: center;
   gap: 8px;
-  animation: pop 0.3s ease-out;
+  animation: pop 0.3s ease-out both;
+  /* Over the game, so nothing below it moves. */
+  position: fixed;
+  z-index: 5;
+  left: 50%;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  width: min(420px, calc(100% - 32px));
+  translate: -50% 0;
+  box-shadow: 0 10px 40px rgb(0 0 0 / 0.25);
+}
+
+/* What is under the board stays in its place, hidden, under Well done. */
+.under {
+  display: contents;
+}
+
+.under--hidden {
+  visibility: hidden;
 }
 
 .solved h2 {
